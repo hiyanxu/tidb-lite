@@ -164,6 +164,17 @@ func (t *TiDBServer) CreateConn() (*sql.DB, error) {
 	return dbConn, err
 }
 
+func (t *TiDBServer) GetDbDSN() string {
+	var dbDSN string
+	if t.cfg.Port != 0 {
+		dbDSN = fmt.Sprintf("%s:%s@tcp(%s:%d)/?%s", "root", "", "127.0.0.1", t.cfg.Port, t.connOpts)
+	} else {
+		dbDSN = fmt.Sprintf("%s:%s@unix(%s)/?%s", "root", "", t.cfg.Socket, t.connOpts)
+	}
+
+	return dbDSN
+}
+
 // Close closes TiDB Server.
 func (t *TiDBServer) Close() {
 	t.serverShutdown(false)
